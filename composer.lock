@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
     "content-hash": "b57114990bdf95abee1b4da3a3fcb767",
-=======
-    "content-hash": "a8e15e8a33ead3d4ddb48feb2e6b31a4",
->>>>>>> origin/dependabot/composer/squizlabs/php_codesniffer-3.8.0
     "packages": [
         {
             "name": "clue/ndjson-react",
