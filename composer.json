@@ -27,7 +27,7 @@
         "ext-pdo": "*",
         "clue/ndjson-react": "^v1.3.0",
         "monolog/monolog": "^2.8",
-        "php-di/php-di": "^6.4",
+        "php-di/php-di": "^7.0",
         "predis/predis": "^2.2",
         "react/mysql": "^0.6.0",
         "react/react": "^v1.4.0",
