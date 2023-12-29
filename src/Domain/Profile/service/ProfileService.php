@@ -12,5 +12,5 @@ interface ProfileService
 
     public function checkNickNameDuplicate(string $nickName): bool;
 
-    public function createUserProfileByToken(string $token, ProfileCreateRequest $requestBody): ?Profile;
+    public function createUserProfileByRequestDto(ProfileCreateRequest $requestBody): ?Profile;
 }

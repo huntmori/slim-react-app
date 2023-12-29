@@ -29,7 +29,8 @@ class ProfileController extends ActionBasedController
 
     public function createUserProfile(Request $request, Response $response, array $args) : Response
     {
-        $body = new ProfileCreateRequest($request->getBody());
+        $requestDto = new ProfileCreateRequest($request);
+        $this->profileService->createUserProfileByRequestDto($requestDto);
         return $this->respondWithData($response);
     }
 }

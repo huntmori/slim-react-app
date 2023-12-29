@@ -55,10 +55,10 @@ class ProfileServiceImplement implements ProfileService
         return false;
     }
 
-    public function createUserProfileByToken(string $token, ProfileCreateRequest $requestBody): ?Profile
+    public function createUserProfileByRequestDto(ProfileCreateRequest $requestBody): ?Profile
     {
         // TODO: Implement createUserProfileByToken() method.
-        $claims = $this->jwtHandler->decodeJwt($token);
+        $claims = $this->jwtHandler->decodeJwt($requestBody->getToken());
         $userId = $this->jwtHandler->getUserIdFromClaims($claims);
 
 //        $user = $this->userService
