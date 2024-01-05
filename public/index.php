@@ -161,7 +161,7 @@ for($i=0; count($serverInfos)<$size; $i++) {
 
         $serverInfos[] = $serverInfo;
 
-        echo $maxPort. "is open ".PHP_EOL;
+        echo $maxPort. " 8i open ".PHP_EOL;
     } else {
         echo $maxPort. "is already used. it will be skipped".PHP_EOL;
     }

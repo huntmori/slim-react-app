@@ -42,6 +42,7 @@ class UserRepositoryImplement extends BaseRepository implements UserRepository
         $stmt = $pdo->prepare("
             INSERT INTO user
             SET id = :id,
+                uid = upper(UUID()),
                 email = :email,
                 user_name = :userName,
                 password = :password,
@@ -72,6 +73,7 @@ class UserRepositoryImplement extends BaseRepository implements UserRepository
         $stmt = $pdo->prepare("
             SELECT  idx,
                     id,
+                    uid,
                     email,
                     password,
                     created_at  as createdAt,
@@ -93,6 +95,7 @@ class UserRepositoryImplement extends BaseRepository implements UserRepository
         $stmt = $pdo->prepare("
             SELECT  idx,
                     id,
+                    uid,
                     email,
                     user_name   as userName,
                     password,
