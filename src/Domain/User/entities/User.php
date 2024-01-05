@@ -12,6 +12,7 @@ class User implements JsonSerializable
 
     private ?int $idx;
     private ?string $id;
+    private ?string $uid;
     private ?string $email;
     private ?string $userName;
     private ?string $password;
@@ -32,6 +33,7 @@ class User implements JsonSerializable
     public array $columnMapping = [
         'idx'=>'idx',
         'id'=>'id',
+        'uid'=>'uid',
         'email'=>'email',
         'userName'=>'user_name',
         'password'=>'password',
@@ -69,6 +71,16 @@ class User implements JsonSerializable
     public function setId(?string $id): void
     {
         $this->id = $id;
+    }
+
+    public function getUid() : ?string
+    {
+        return $this->uid;
+    }
+
+    public function setUid(string $uid) : void
+    {
+        $this->uid = $uid;
     }
 
     public function getEmail(): ?string
