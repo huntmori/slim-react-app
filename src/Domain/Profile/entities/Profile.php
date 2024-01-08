@@ -15,6 +15,21 @@ class Profile
     private ?string $createdAt;
     private ?string $updatedAt;
 
+    public function toArray() : array {
+        return ([
+            'idx'=> $this->idx,
+            'uid'=> $this->uid,
+            'userUid' => $this->userUid,
+            'profileNickName' => $this->profileNickName,
+            'isPrimary' => $this->isPrimary,
+            'deleted' => $this->deleted,
+            'activated' => $this->activated,
+            'banned' => $this->banned,
+            'createdAt' => $this->createdAt,
+            'updatedAt' => $this->updatedAt
+        ]);
+    }
+
     public function getIdx(): ?int
     {
         return $this->idx;

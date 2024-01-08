@@ -24,7 +24,8 @@ class ProfileRepositoryImplement extends BaseRepository implements ProfileReposi
         $pdo = $this->getPdo();
         $stmt = $pdo->prepare("
             INSERT INTO profile
-            SET user_uid = :userUid,
+            SET uid = UPPER(UUID()),
+                user_uid = :userUid,
                 profile_nickname = :nickName,
                 is_primary = :isPrimary,
                 deleted = :deleted,
@@ -57,6 +58,7 @@ class ProfileRepositoryImplement extends BaseRepository implements ProfileReposi
     {
         return $this->selectOne(
             " SELECT  prf.idx                 as  idx,
+                        prf.uid                 as  uid,
                         prf.user_uid            as  userUid,
                         prf.profile_nickname    as  profileNickName,
                         prf.is_primary          as  isPrimary,
