@@ -8,13 +8,14 @@ use Psr\Http\Message\RequestInterface;
 
 class ProfileCreateRequest extends BaseDto
 {
-    private ?string $nickname;
+    public ?string $nickname;
     private ?string $token;
     use AuthorizationRequestTrait;
 
     public function __construct(RequestInterface $request)
     {
-        parent::__construct($request->getBody());
+        var_dump(json_decode($request->getBody()));
+        parent::__construct(json_decode($request->getBody()));
         $this->token = $this->extractToken($request);
     }
 

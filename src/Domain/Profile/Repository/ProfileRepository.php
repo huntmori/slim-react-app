@@ -8,4 +8,9 @@ interface  ProfileRepository
 {
 
     public function createUserProfile(int $userIdx, Profile $profile);
+
+    public function getUserProfileByProfileIdx(int $profileIdx);
+    public function getUserProfileByUserUid(string $uid);
+
+    public function getUserProfileByProfileUid(string $uid);
 }
