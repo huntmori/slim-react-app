@@ -29,4 +29,20 @@ abstract class BaseRepository
     {
 //        $this->connectionPool->dispose($pdo);
     }
+
+    public function selectOne(string $sql, array $paramMap, string $returnType) {
+        $pdo = $this->getPdo();
+        $stmt = $pdo->prepare($sql);
+
+        $keys = array_keys($paramMap);
+        for ($i=0; $i<count($keys); $i++) {
+            $key = $keys[$i];
+            $stmt->bindValue($key, $paramMap[$key]);
+        }
+
+        $stmt->execute();
+        $result = $stmt->fetchObject($returnType);
+        $this->disposePdo($pdo);
+        return $result;
+    }
 }

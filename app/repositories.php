@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Middleware\JwtHandler;
+use App\Application\Middleware\JwtMiddleware;
 use App\Domain\Profile\Repository\ProfileRepository;
 use App\Domain\Profile\Repository\ProfileRepositoryImplement;
 use App\Domain\Profile\service\ProfileService;
@@ -30,5 +32,9 @@ return function (ContainerBuilder $containerBuilder) {
     ]);
     $containerBuilder->addDefinitions([
        ProfileRepository::class => autowire(ProfileRepositoryImplement::class)
+    ]);
+    $containerBuilder->addDefinitions([
+        JwtMiddleware::class => autowire(JwtMiddleware::class),
+        JwtHandler::class => autowire(JwtHandler::class)
     ]);
 };
