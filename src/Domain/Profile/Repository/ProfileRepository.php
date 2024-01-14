@@ -13,4 +13,6 @@ interface  ProfileRepository
     public function getUserProfileByUserUid(string $uid);
 
     public function getUserProfileByProfileUid(string $uid);
+
+    public function getUserProfileByUserIdxAndActivate(string $userUid, bool $activated) : array;
 }

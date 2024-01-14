@@ -30,9 +30,9 @@ class ProfileServiceImplement implements ProfileService
         $this->encrypt = $encrypt;
     }
 
-    public function getUserProfiles(int $userIdx): array
+    public function getUserProfiles(string $uid): array
     {
-        return [];
+        return $this->profileRepository->getUserProfileByUserIdxAndActivate($uid, true);
     }
 
     public function createUserProfile(int $userIdx, string $userUid, string $nickName) : int

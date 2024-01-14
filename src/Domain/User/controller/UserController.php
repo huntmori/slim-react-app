@@ -3,6 +3,7 @@
 namespace App\Domain\User\controller;
 
 use App\Domain\Common\controller\ActionBasedController;
+use App\Domain\Profile\service\ProfileService;
 use App\Domain\User\models\UserCreateRequest;
 use App\Domain\User\models\UserLoginRequest;
 use App\Domain\User\service\UserService;
@@ -14,6 +15,7 @@ class UserController extends ActionBasedController
 {
     private LoggerInterface $logger;
     private UserService $userService;
+    private ProfileService $profileService;
 
     public function __construct(
         LoggerInterface $logger,
@@ -59,7 +61,8 @@ class UserController extends ActionBasedController
         $requestBody = new UserLoginRequest(json_decode($request->getBody()));
 
         $userLoginResult = $this->userService->userLogin($requestBody);
-        echo json_encode($userLoginResult).PHP_EOL;
+
+
         return $this->respondWithData($response, $userLoginResult, 200);
     }
 }

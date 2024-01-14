@@ -18,13 +18,16 @@ class JwtHandler
         $this->encryptKey = $settings->get('config')['MEMBER_PASSWORD_ENCRYPT_KEY'];
     }
 
-    public function createToken($userId) :string
+    public function createToken(array $params) :string
     {
+        $userId = $params['userId'];
+        $profileUid = $params['profileUid'];
         $claims = [
             'userId' => $userId,
+            'profileUid' => $profileUid,
             'exp'=>strtotime($this->TOKEN_EXPIRE)
         ];
-
+        var_dump($claims);
         $token = $this->encodeJwt($claims);
         //echo PHP_EOL.'token : '.$token.PHP_EOL;
         return $this->encryptToken($token);

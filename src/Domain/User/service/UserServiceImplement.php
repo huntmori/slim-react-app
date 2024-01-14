@@ -4,6 +4,7 @@ namespace App\Domain\User\service;
 
 use App\Application\Common\MemberPasswordEncrypt;
 use App\Application\Middleware\JwtHandler;
+use App\Domain\Profile\entities\Profile;
 use App\Domain\Profile\service\ProfileService;
 use App\Domain\User\entities\User;
 use App\Domain\User\exceptions\PasswordNotMatchException;
@@ -106,10 +107,33 @@ class UserServiceImplement implements UserService
             throw new PasswordNotMatchException("User not found. may be invalid password or user id", 401);
         }
 
-        $token = $this->getUserJwtToken($user);
-
         //todo : get users profiles
-        $profiles = $this->profileService->getUserProfiles($user->getIdx());
+        $profiles = $this->profileService->getUserProfiles($user->getUid());
+        $mainProfileExist = false;
+        $primaryProfile = null;
+        for($i=0; $i<count($profiles); $i++) {
+            /** @var Profile $profile */
+            $profile = $profiles[$i];
+            if($profile->getIsPrimary()) {
+                $mainProfileExist = true;
+                $primaryProfile = $profile;
+                break;
+            }
+        }
+
+        if($mainProfileExist === false) {
+            for($i=0; $i<count($profiles); $i++) {
+                /** @var Profile $profile */
+                $profile = $profiles[$i];
+                $profile->setIsPrimary(true);
+                $primaryProfile = $profile;
+                break;
+            }
+        }
+
+        $token = $this->getUserJwtToken($user, $primaryProfile);
+
+
 
         return new UserLoginResponse([
             'profiles'=>$profiles,
@@ -118,15 +142,18 @@ class UserServiceImplement implements UserService
         ]);
     }
 
-    public function getUserJwtToken(User $user) : string
+    public function getUserJwtToken(User $user, ?Profile $primaryProfile) : string
     {
         $userIdx = $user->getIdx();
         $redisTokenKey = "JWT_{$userIdx}";
 
         $isSetRedis = $this->redisClient->get($redisTokenKey);
         $token = null;
+        $tokenParameter = [];
+        $tokenParameter['userId'] = $user->getId();
+        $tokenParameter['profileUid'] = $primaryProfile?->getUid();
         if (is_null($isSetRedis) || true) {
-            $token = $this->jwtHandler->createToken($user->getId());
+            $token = $this->jwtHandler->createToken($tokenParameter);
             $token = $this->memberPasswordEncrypt->encrypt($token);
             $this->redisClient->setex($redisTokenKey, 86400, $token);
         } else {

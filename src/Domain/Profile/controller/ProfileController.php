@@ -33,4 +33,11 @@ class ProfileController extends ActionBasedController
         $profile = $this->profileService->createUserProfileByRequestDto($requestDto);
         return $this->respondWithData($response, $profile->toArray(), 200);
     }
+
+    public function getProfiles(Request $request, Response $response, array $args) : Response
+    {
+        $token = $this->profileService->getUserProfilesByRequest($request);
+
+    }
+
 }

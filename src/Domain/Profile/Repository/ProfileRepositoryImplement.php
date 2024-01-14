@@ -85,4 +85,31 @@ class ProfileRepositoryImplement extends BaseRepository implements ProfileReposi
     {
         return null;
     }
+
+    public function getUserProfileByUserIdxAndActivate(string $userUid, bool $activated): array
+    {
+        return $this->selectList(
+            "SELECT
+                        pro.idx, 
+                        pro.uid, 
+                        pro.user_uid            as  userUid, 
+                        pro.profile_nickname    as  profileNickName, 
+                        pro.is_primary          as  isPrimary, 
+                        pro.deleted, 
+                        pro.activated, 
+                        pro.banned, 
+                        pro.created_at          as  createdAt, 
+                        pro.updated_at          as  updatedAt
+	                FROM 
+	                    profile pro
+	                WHERE   1=1
+	                AND     pro.user_uid = :userUid
+	                AND     pro.activated = :activated ",
+            [
+                'userUid' => $userUid,
+                'activated' => $activated
+            ],
+            Profile::class
+        );
+    }
 }

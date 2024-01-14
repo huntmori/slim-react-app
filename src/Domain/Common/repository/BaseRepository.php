@@ -45,4 +45,23 @@ abstract class BaseRepository
         $this->disposePdo($pdo);
         return $result;
     }
+
+    public function selectList(string $sql, array $paramMap, string $returnType) : array {
+        $pdo = $this->getPdo();
+        $stmt = $pdo->prepare($sql);
+
+        $keys = array_keys($paramMap);
+        for ($i=0; $i<count($keys); $i++) {
+            $key = $keys[$i];
+            $stmt->bindValue($key, $paramMap[$key]);
+        }
+
+        $stmt->execute();
+        $array = [];
+        while($row = $stmt->fetchObject($returnType)) {
+            $array[] = $row;
+        }
+        $this->disposePdo($pdo);
+        return $array;
+    }
 }
