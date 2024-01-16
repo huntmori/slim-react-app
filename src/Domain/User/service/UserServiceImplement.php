@@ -133,8 +133,6 @@ class UserServiceImplement implements UserService
 
         $token = $this->getUserJwtToken($user, $primaryProfile);
 
-
-
         return new UserLoginResponse([
             'profiles'=>$profiles,
             'userIdx' => $user->getIdx(),

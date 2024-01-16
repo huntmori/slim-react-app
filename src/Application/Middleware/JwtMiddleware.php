@@ -60,12 +60,11 @@ class JwtMiddleware implements MiddlewareInterface
         $claims = $this->jwtHandler->decodeJwt($tokenDecoded);
         var_dump($claims);
         // 유효기간 확인
-        $expiredAt = $claims['exp'];
+        $expiredAt = $claims->exp;
         $now = strtotime("now");
         if ($expiredAt < $now) {
             return false;
         }
-        $userId = $claims['userId'];
         // 세션 확인
         //session_start();
         //$tokens = $_SESSION[$userId];
@@ -74,7 +73,7 @@ class JwtMiddleware implements MiddlewareInterface
         //}
 
         // 유저 확인
-        return $userId;
+        return $claims->userId;
     }
 
     public function validateToken(string $token) : bool

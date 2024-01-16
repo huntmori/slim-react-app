@@ -10,6 +10,7 @@ use App\Domain\Profile\Repository\ProfileRepository;
 use App\Domain\User\repository\UserRepository;
 use App\Domain\User\service\UserService;
 use Cassandra\Uuid;
+use HttpException;
 
 class ProfileServiceImplement implements ProfileService
 {
@@ -64,20 +65,24 @@ class ProfileServiceImplement implements ProfileService
      */
     public function createUserProfileByRequestDto(ProfileCreateRequest $requestBody): ?Profile
     {
-        // TODO: Implement createUserProfileByToken() method.
-        var_dump($requestBody);
-        echo "Before Decoded Token : " . $requestBody->getToken() . PHP_EOL;
+        /*
+            var_dump($requestBody);
+            echo "Before Decoded Token : " . $requestBody->getToken() . PHP_EOL;
+        */
         $decodeToken = $this->encrypt->decrypt($requestBody->getToken());
-        echo "Decoded Token : " . $decodeToken . PHP_EOL;
+
+        /*
+            echo "Decoded Token : " . $decodeToken . PHP_EOL;
+        */
         $decodedJwt = $this->jwtHandler->decryptToken($decodeToken);
         $claims = $this->jwtHandler->decodeJwt($decodedJwt);
 
-        $userId = $this->jwtHandler->getUserIdFromClaims($claims);
+        $userId = $claims->userId;
 
         $user = $this->userRepository->findUserOfUserId($userId);
 
         if (is_null($user)) {
-            throw new \HttpException("user not found", 403);
+            throw new HttpException("user not found", 403);
         }
 
         $userUid = $user->getUid();
@@ -88,9 +93,12 @@ class ProfileServiceImplement implements ProfileService
             throw new \HttpException("nickname already used", 503);
         }
 
-        $profileIdx = $this->createUserProfile($userIdx, $userUid, $nickName);
-        $profile = $this->profileRepository->getUserProfileByProfileIdx($profileIdx);
+        $profileIdx = $this->createUserProfile(
+            $userIdx,
+            $userUid,
+            $nickName
+        );
 
-        return $profile;
+        return $this->profileRepository->getUserProfileByProfileIdx($profileIdx);
     }
 }
