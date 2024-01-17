@@ -10,11 +10,13 @@ class JwtClaim implements JsonSerializable
     public ?string $profileUid;
     public ?int $exp;
 
-    public function init(string $userId, string $profileUid, int $exp) : void
+    public function init(string $userId, string $profileUid, int $exp) : JwtClaim
     {
         $this->userId = $userId;
         $this->profileUid = $profileUid;
         $this->exp = $exp;
+
+        return $this;
     }
 
     public function initFromArray(array $claim) : JwtClaim

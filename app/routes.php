@@ -46,6 +46,9 @@ return function (App $app) {
             "",
             ProfileController::class . ':createUserProfile'
         )->add(JwtMiddleware::class);
+
+        $group->get("/{uid}", ProfileController::class.":getProfiles")
+            ->add(JwtMiddleware::class);
     });
     /*
     $app->get("/test", function(Request $request, Response $response) use ($app) {

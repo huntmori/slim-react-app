@@ -3,14 +3,18 @@
 namespace App\Domain\Profile\service;
 
 use App\Application\Common\MemberPasswordEncrypt;
+use App\Application\Common\model\JwtClaim;
+use App\Application\Common\service\TokenService;
 use App\Application\Middleware\JwtHandler;
 use App\Domain\Profile\entities\Profile;
 use App\Domain\Profile\models\ProfileCreateRequest;
+use App\Domain\Profile\models\ProfileGetByIdRequest;
 use App\Domain\Profile\Repository\ProfileRepository;
 use App\Domain\User\repository\UserRepository;
 use App\Domain\User\service\UserService;
 use Cassandra\Uuid;
 use HttpException;
+use Exception;
 
 class ProfileServiceImplement implements ProfileService
 {
@@ -18,16 +22,19 @@ class ProfileServiceImplement implements ProfileService
     private UserRepository $userRepository;
     private JwtHandler $jwtHandler;
     private MemberPasswordEncrypt $encrypt;
+    private TokenService $tokenService;
 
     public function __construct(
         ProfileRepository $profileRepository,
         JwtHandler $jwtHandler,
         UserRepository $userRepository,
+        TokenService $tokenService,
         MemberPasswordEncrypt $encrypt
     ) {
         $this->profileRepository = $profileRepository;
         $this->jwtHandler = $jwtHandler;
         $this->userRepository = $userRepository;
+        $this->tokenService = $tokenService;
         $this->encrypt = $encrypt;
     }
 
@@ -56,12 +63,12 @@ class ProfileServiceImplement implements ProfileService
 
     public function checkNickNameDuplicate(string $nickName): bool
     {
-        // TODO: Implement checkNickNameDuplicate() method.
-        return false;
+        return $this->profileRepository->checkNicknameCount($nickName) > 0;
     }
 
     /**
      * @throws \HttpException
+     * @throws Exception
      */
     public function createUserProfileByRequestDto(ProfileCreateRequest $requestBody): ?Profile
     {
@@ -82,7 +89,7 @@ class ProfileServiceImplement implements ProfileService
         $user = $this->userRepository->findUserOfUserId($userId);
 
         if (is_null($user)) {
-            throw new HttpException("user not found", 403);
+            throw new Exception("user not found", 403);
         }
 
         $userUid = $user->getUid();
@@ -90,7 +97,7 @@ class ProfileServiceImplement implements ProfileService
         $nickName = $requestBody->getNickname();
 
         if($this->checkNickNameDuplicate($nickName)) {
-            throw new \HttpException("nickname already used", 503);
+            throw new Exception("nickname already used", 503);
         }
 
         $profileIdx = $this->createUserProfile(
@@ -100,5 +107,17 @@ class ProfileServiceImplement implements ProfileService
         );
 
         return $this->profileRepository->getUserProfileByProfileIdx($profileIdx);
+    }
+
+    public function getUserProfilesByRequest(ProfileGetByIdRequest $request) : ?Profile
+    {
+        $token = $request->getToken();
+
+        /** @var JwtClaim $claims */
+        $claims = $this->tokenService->getClaimFromToken($token);
+
+        $profileUid = $claims->profileUid;
+        var_dump($profileUid);
+        return $this->profileRepository->getUserProfileByProfileUid($profileUid);
     }
 }

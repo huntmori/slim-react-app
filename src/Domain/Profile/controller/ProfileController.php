@@ -3,7 +3,9 @@
 namespace App\Domain\Profile\controller;
 
 use App\Domain\Common\controller\ActionBasedController;
+use App\Domain\Profile\entities\Profile;
 use App\Domain\Profile\models\ProfileCreateRequest;
+use App\Domain\Profile\models\ProfileGetByIdRequest;
 use App\Domain\Profile\service\ProfileService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -22,22 +24,29 @@ class ProfileController extends ActionBasedController
     }
 
     // TODO : Implement
-    public function getUserProfile($userIdx) : array
+    public function getUserProfile($userIdx): array
     {
         return [];
     }
 
-    public function createUserProfile(Request $request, Response $response, array $args) : Response
+    public function createUserProfile(Request $request, Response $response, array $args): Response
     {
         $requestDto = new ProfileCreateRequest($request);
         $profile = $this->profileService->createUserProfileByRequestDto($requestDto);
         return $this->respondWithData($response, $profile->toArray(), 200);
     }
 
-    public function getProfiles(Request $request, Response $response, array $args) : Response
+    public function getProfiles(Request $request, Response $response, array $args): Response
     {
-        $token = $this->profileService->getUserProfilesByRequest($request);
+        $requestDto = new ProfileGetByIdRequest($request, $args);
 
+        /** @var Profile $profile */
+        $profile = $this->profileService->getUserProfilesByRequest($requestDto);
+        var_dump($profile);
+        return $this->respondWithData(
+            $response,
+            $profile->toArray(),
+            200
+        );
     }
-
 }

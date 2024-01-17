@@ -15,4 +15,5 @@ interface  ProfileRepository
     public function getUserProfileByProfileUid(string $uid);
 
     public function getUserProfileByUserIdxAndActivate(string $userUid, bool $activated) : array;
+    public function checkNicknameCount(string $nickname) : int;
 }

@@ -23,20 +23,15 @@ class JwtHandler
     {
         $userId = $params['userId'];
         $profileUid = $params['profileUid'];
-        $claims = [
-            'userId' => $userId,
-            'profileUid' => $profileUid,
-            'exp'=>strtotime($this->TOKEN_EXPIRE)
-        ];
-        $claims = new JwtClaim();
-        $claims->init(
+
+        $claims = (new JwtClaim())->init(
             $userId,
             $profileUid,
             strtotime($this->TOKEN_EXPIRE)
         );
-        var_dump($claims);
+
         $token = $this->encodeJwt($claims);
-        //echo PHP_EOL.'token : '.$token.PHP_EOL;
+
         return $this->encryptToken($token);
     }
 
