@@ -15,4 +15,17 @@ class ProfileGetListRequest
     {
         $this->token = $this->extractToken($request);
     }
+
+    public function getToken() : ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token) : ?string
+    {
+        $this->token = $token;
+        return $this->token;
+    }
+
+
 }
