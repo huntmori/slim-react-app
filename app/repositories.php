@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Common\service\TokenService;
+use App\Application\Common\service\TokenServiceImplement;
 use App\Application\Middleware\JwtHandler;
 use App\Application\Middleware\JwtMiddleware;
 use App\Domain\Profile\Repository\ProfileRepository;
@@ -20,21 +22,15 @@ return function (ContainerBuilder $containerBuilder) {
 //    $containerBuilder->addDefinitions([
 //        UserRepository::class => autowire(InMemoryUserRepository::class),
 //    ]);
-
     $containerBuilder->addDefinitions([
         UserService::class => autowire(UserServiceImplement::class),
-    ]);
-    $containerBuilder->addDefinitions([
         UserRepository::class => autowire(UserRepositoryImplement::class),
-    ]);
-    $containerBuilder->addDefinitions([
+
         ProfileService::class => autowire(ProfileServiceImplement::class),
-    ]);
-    $containerBuilder->addDefinitions([
-       ProfileRepository::class => autowire(ProfileRepositoryImplement::class)
-    ]);
-    $containerBuilder->addDefinitions([
+        ProfileRepository::class => autowire(ProfileRepositoryImplement::class),
+
         JwtMiddleware::class => autowire(JwtMiddleware::class),
-        JwtHandler::class => autowire(JwtHandler::class)
+        JwtHandler::class => autowire(JwtHandler::class),
+        TokenService::class => autowire(TokenServiceImplement::class)
     ]);
 };

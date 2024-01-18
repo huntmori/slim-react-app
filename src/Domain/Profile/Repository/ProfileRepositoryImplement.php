@@ -7,6 +7,7 @@ use App\Domain\Common\repository\BaseRepository;
 use App\Domain\Profile\entities\Profile;
 use App\Domain\Profile\Repository\ProfileRepository;
 use Psr\Container\ContainerInterface;
+use stdClass;
 
 class ProfileRepositoryImplement extends BaseRepository implements ProfileRepository
 {
@@ -81,8 +82,73 @@ class ProfileRepositoryImplement extends BaseRepository implements ProfileReposi
         return null;
     }
 
-    public function getUserProfileByProfileUid(string $uid)
+    public function getUserProfileByProfileUid(string $uid) : ?Profile
     {
-        return null;
+        return $this->selectOne(
+            "SELECT
+                        pro.idx, 
+                        pro.uid, 
+                        pro.user_uid            as  userUid, 
+                        pro.profile_nickname    as  profileNickName, 
+                        pro.is_primary          as  isPrimary, 
+                        pro.deleted, 
+                        pro.activated, 
+                        pro.banned, 
+                        pro.created_at          as  createdAt, 
+                        pro.updated_at          as  updatedAt
+	                FROM 
+	                    profile pro
+	                WHERE   1=1
+	                AND     pro.uid = :profileUid",
+            [
+                'profileUid'=>$uid
+            ],
+            Profile::class
+        );
+    }
+
+    public function getUserProfileByUserIdxAndActivate(string $userUid, bool $activated): array
+    {
+        return $this->selectList(
+            "SELECT
+                        pro.idx, 
+                        pro.uid, 
+                        pro.user_uid            as  userUid, 
+                        pro.profile_nickname    as  profileNickName, 
+                        pro.is_primary          as  isPrimary, 
+                        pro.deleted, 
+                        pro.activated, 
+                        pro.banned, 
+                        pro.created_at          as  createdAt, 
+                        pro.updated_at          as  updatedAt
+	                FROM 
+	                    profile pro
+	                WHERE   1=1
+	                AND     pro.user_uid = :userUid
+	                AND     pro.activated = :activated ",
+            [
+                'userUid' => $userUid,
+                'activated' => $activated
+            ],
+            Profile::class
+        );
+    }
+
+    public function checkNicknameCount(string $nickname) : int
+    {
+        $result = $this->selectList(
+            "
+                SELECT  1
+                FROM    profile pro
+                WHERE   profile_nickname = :nickname
+                AND     deleted = false
+            ",
+            [
+                'nickname' => $nickname,
+            ],
+            stdClass::class
+        );
+
+        return count($result);
     }
 }
