@@ -14,31 +14,17 @@ return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
         SettingsInterface::class => function () {
             $ROOT_PATH = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR;
-//            echo $ROOT_PATH.PHP_EOL;
-//            $profileEnv = Dotenv::createImmutable(
-//                $ROOT_PATH,
-//                ".env.profile"
-//            );
-//            $profileLoaded = $profileEnv->load();
-//            var_dump($profileLoaded);
-//            //$stringProfile = $profileLoaded['PROFILE'];
-//            $stringProfile = 'local';
-//
-//            $configEnv = Dotenv::createImmutable(
-//                $ROOT_PATH,
-//                ".env.{$stringProfile}"
-//            );
-//            $config = $configEnv->load();
-            $stringProfile = "local";
-            $string = file_get_contents($ROOT_PATH.".env.local.json");
-            $config = json_decode($string, true);
+
+            $stringProfile = require("../env.profile.php");
+            $config  = require "../env.local.php";
             return new Settings([
                 'displayErrorDetails' => true, // Should be set to false in production
                 'logError'            => false,
                 'logErrorDetails'     => false,
                 'logger' => [
                     'name' => 'slim-app',
-                    'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
+                    //'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
+                    'path' => 'php://stdout',
                     'level' => Logger::DEBUG,
                 ],
                 'profile'=>$stringProfile,

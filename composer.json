@@ -38,6 +38,7 @@
         "firebase/php-jwt": "*"
     },
     "require-dev": {
+        "clue/phar-composer": "*",
         "jangregor/phpstan-prophecy": "^1.0.0",
         "phpspec/prophecy-phpunit": "^2.1",
         "phpstan/extension-installer": "^1.2.0",
@@ -65,5 +66,6 @@
     "scripts": {
         "start": "php  ./public/index.php",
         "test": "phpunit"
-    }
+    },
+    "bin": ["public/index.php", ".env.profile", ".env.local.json"]
 }
