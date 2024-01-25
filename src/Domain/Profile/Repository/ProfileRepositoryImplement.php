@@ -151,4 +151,24 @@ class ProfileRepositoryImplement extends BaseRepository implements ProfileReposi
 
         return count($result);
     }
+
+    public function updateProfileActivation(Profile $profile, bool $activation) : ?Profile
+    {
+        $result = $this->update("
+            UPDATE  profile
+            SET     activated = :activated,
+                    updated_at = NOW()
+            WHERE   uid = :uid",
+            [
+                'activated' => ($activation ? 1 : 0),
+                'uid' => $profile->getUid()
+            ]
+        );
+
+        if (!$result) {
+            return null;
+        }
+
+        return $this->getUserProfileByProfileUid($profile->getUid());
+    }
 }

@@ -65,7 +65,8 @@
     },
     "scripts": {
         "start": "php  ./public/index.php",
-        "test": "phpunit"
+        "test": "phpunit",
+        "build":" php -d phar.readonly=off .\\vendor\\bin\\phar-composer build  .  .\\app.phar "
     },
     "bin": ["public/index.php", ".env.profile", ".env.local.json"]
 }

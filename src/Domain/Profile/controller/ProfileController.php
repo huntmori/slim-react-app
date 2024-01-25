@@ -8,6 +8,7 @@ use App\Domain\Profile\entities\Profile;
 use App\Domain\Profile\models\ProfileCreateRequest;
 use App\Domain\Profile\models\ProfileGetByIdRequest;
 use App\Domain\Profile\models\ProfileGetListRequest;
+use App\Domain\Profile\models\ProfilePatchActivationRequest;
 use App\Domain\Profile\service\ProfileService;
 use App\Domain\User\service\UserService;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -83,4 +84,19 @@ class ProfileController extends ActionBasedController
             200
         );
     }
+
+    public function updateProfileActivation(Request $request, Response $response, array $args): Response
+    {
+        $requestDto = new ProfilePatchActivationRequest($request, $args);
+
+        $claims = $this->tokenService->getClaimFromToken($requestDto->getToken());
+        $user = $this->userService->getUserByUserId($claims->userId);
+        $profile = $this->profileService->getUserProfileByProfileUid($requestDto->getProfileUid());
+
+        $result = $this->profileService->updateProfileActivation($user, $profile, $requestDto->getActivate());
+
+
+        return $this->respondWithData($response, $result->toArray(), 200);
+    }
+
 }

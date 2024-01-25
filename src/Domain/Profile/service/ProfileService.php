@@ -5,6 +5,7 @@ namespace App\Domain\Profile\service;
 use App\Domain\Profile\entities\Profile;
 use App\Domain\Profile\models\ProfileCreateRequest;
 use App\Domain\Profile\models\ProfileGetByIdRequest;
+use App\Domain\User\entities\User;
 
 interface ProfileService
 {
@@ -16,4 +17,10 @@ interface ProfileService
     public function createUserProfileByRequestDto(ProfileCreateRequest $requestBody): ?Profile;
 
     public function getUserProfilesByRequest(ProfileGetByIdRequest $request) : ?Profile;
+
+    public function updateProfileActivation(User $user, Profile $profile, bool $activation) : ?Profile;
+
+
+    public function getUserProfileByProfileUid(string $uid) : ?Profile;
+
 }

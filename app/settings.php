@@ -15,8 +15,8 @@ return function (ContainerBuilder $containerBuilder) {
         SettingsInterface::class => function () {
             $ROOT_PATH = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR;
 
-            $stringProfile = require("../env.profile.php");
-            $config  = require "../env.local.php";
+            $stringProfile = require($ROOT_PATH. DIRECTORY_SEPARATOR. "env.profile.php");
+            $config  = require($ROOT_PATH. DIRECTORY_SEPARATOR. "env.{$stringProfile}.php");
             return new Settings([
                 'displayErrorDetails' => true, // Should be set to false in production
                 'logError'            => false,

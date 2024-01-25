@@ -10,6 +10,7 @@ use App\Domain\Profile\entities\Profile;
 use App\Domain\Profile\models\ProfileCreateRequest;
 use App\Domain\Profile\models\ProfileGetByIdRequest;
 use App\Domain\Profile\Repository\ProfileRepository;
+use App\Domain\User\entities\User;
 use App\Domain\User\repository\UserRepository;
 use App\Domain\User\service\UserService;
 use Cassandra\Uuid;
@@ -119,5 +120,22 @@ class ProfileServiceImplement implements ProfileService
         $profileUid = $claims->profileUid;
         var_dump($profileUid);
         return $this->profileRepository->getUserProfileByProfileUid($profileUid);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function updateProfileActivation(User $user, Profile $profile, bool $activation): ?Profile
+    {
+        if ($user->getUid() !== $profile->getUserUid()) {
+            throw new Exception("자신의 프로필만 수정 할 수 있습니다.");
+        }
+
+        return $this->profileRepository->updateProfileActivation($profile, $activation);
+    }
+
+    public function getUserProfileByProfileUid(string $uid): ?Profile
+    {
+        return $this->profileRepository->getUserProfileByProfileUid($uid);
     }
 }

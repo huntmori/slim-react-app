@@ -64,4 +64,21 @@ abstract class BaseRepository
         $this->disposePdo($pdo);
         return $array;
     }
+
+    public function update(string $sql, array $paramMap): bool
+    {
+        $pdo = $this->getPdo();
+        echo $sql.PHP_EOL;
+        $stmt = $pdo->prepare($sql);
+
+        $keys = array_keys($paramMap);
+        for ($i=0; $i<count($keys); $i++) {
+            $key = $keys[$i];
+            $stmt->bindValue($key, $paramMap[$key]);
+        }
+
+        $result = $stmt->execute();
+        $this->disposePdo($pdo);
+        return $result;
+    }
 }
