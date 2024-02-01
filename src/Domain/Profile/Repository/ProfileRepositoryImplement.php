@@ -171,4 +171,28 @@ class ProfileRepositoryImplement extends BaseRepository implements ProfileReposi
 
         return $this->getUserProfileByProfileUid($profile->getUid());
     }
+
+    public function getListByNickname(?string $getNickname) : array
+    {
+        $sql = "
+            SELECT
+                pro.idx, 
+                pro.uid, 
+                pro.user_uid            as  userUid, 
+                pro.profile_nickname    as  profileNickName, 
+                pro.is_primary          as  isPrimary, 
+                pro.deleted, 
+                pro.activated, 
+                pro.banned, 
+                pro.created_at          as  createdAt, 
+                pro.updated_at          as  updatedAt
+            FROM 
+                profile pro
+            WHERE   1=1
+            AND     pro.profile_nickname = :nickname
+        ";
+        $paramMap = [ 'nickname' => $getNickname];
+        $returnType = Profile::class;
+        return $this->selectList($sql, $paramMap, $returnType);
+    }
 }

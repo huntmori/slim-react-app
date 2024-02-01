@@ -9,6 +9,7 @@ use App\Application\Middleware\JwtHandler;
 use App\Domain\Profile\entities\Profile;
 use App\Domain\Profile\models\ProfileCreateRequest;
 use App\Domain\Profile\models\ProfileGetByIdRequest;
+use App\Domain\Profile\models\SearchByNicknameRequest;
 use App\Domain\Profile\Repository\ProfileRepository;
 use App\Domain\User\entities\User;
 use App\Domain\User\repository\UserRepository;
@@ -137,5 +138,10 @@ class ProfileServiceImplement implements ProfileService
     public function getUserProfileByProfileUid(string $uid): ?Profile
     {
         return $this->profileRepository->getUserProfileByProfileUid($uid);
+    }
+
+    public function searchByNickname(SearchByNicknameRequest $requestDto): array
+    {
+        return $this->profileRepository->getListByNickname($requestDto->getNickname());
     }
 }

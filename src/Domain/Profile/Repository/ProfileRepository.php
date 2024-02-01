@@ -18,4 +18,6 @@ interface  ProfileRepository
     public function checkNicknameCount(string $nickname) : int;
 
     public function updateProfileActivation(Profile $profile, bool $activation) : ?Profile;
+
+    public function getListByNickname(?string $getNickname) : array;
 }

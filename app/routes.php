@@ -49,17 +49,22 @@ return function (App $app) {
 
         $group->get(
             "/{uid}",
-            ProfileController::class.":getProfile"
+            ProfileController::class . ":getProfile"
         )->add(JwtMiddleware::class);
 
         $group->get(
             "",
-            ProfileController::class.":getProfiles"
+            ProfileController::class . ":getProfiles"
         )->add(JwtMiddleware::class);
 
         $group->patch(
             "/{uid}/activation",
-            ProfileController::class.":updateProfileActivation"
+            ProfileController::class . ":updateProfileActivation"
+        )->add(JwtMiddleware::class);
+
+        $group->get(
+            "/nickname/{nickname}",
+            ProfileController::class . ":searchByNickname"
         )->add(JwtMiddleware::class);
     });
     /*

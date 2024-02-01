@@ -5,6 +5,7 @@ namespace App\Domain\Profile\service;
 use App\Domain\Profile\entities\Profile;
 use App\Domain\Profile\models\ProfileCreateRequest;
 use App\Domain\Profile\models\ProfileGetByIdRequest;
+use App\Domain\Profile\models\SearchByNicknameRequest;
 use App\Domain\User\entities\User;
 
 interface ProfileService
@@ -22,5 +23,7 @@ interface ProfileService
 
 
     public function getUserProfileByProfileUid(string $uid) : ?Profile;
+
+    public function searchByNickname(SearchByNicknameRequest $requestDto) : array;
 
 }

@@ -9,6 +9,7 @@ use App\Domain\Profile\models\ProfileCreateRequest;
 use App\Domain\Profile\models\ProfileGetByIdRequest;
 use App\Domain\Profile\models\ProfileGetListRequest;
 use App\Domain\Profile\models\ProfilePatchActivationRequest;
+use App\Domain\Profile\models\SearchByNicknameRequest;
 use App\Domain\Profile\service\ProfileService;
 use App\Domain\User\service\UserService;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -99,4 +100,21 @@ class ProfileController extends ActionBasedController
         return $this->respondWithData($response, $result->toArray(), 200);
     }
 
+    public function searchByNickname(Request $request, Response $response, array $args): Response
+    {
+        $requestDto = new SearchByNicknameRequest($request, $args);
+        $profiles = $this->profileService->searchByNickname($requestDto);
+        $result = [];
+        for($i=0;$i<count($profiles);$i++) {
+            /** @var Profile $profile */
+            $profile = $profiles[$i];
+            $result[] = $profile->toArray();
+        }
+
+        return $this->respondWithData(
+            $response,
+            $result,
+            200
+        );
+    }
 }
