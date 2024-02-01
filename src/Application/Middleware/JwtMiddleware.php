@@ -5,6 +5,7 @@ namespace App\Application\Middleware;
 use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
 use App\Application\Actions\AppResponsePayload;
+use App\Application\Common\MemberPasswordEncrypt;
 use App\Application\Settings\SettingsInterface;
 use DI\Container;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,14 +23,21 @@ class JwtMiddleware implements MiddlewareInterface
     private string $HEADER_KEY_NAME = "Authorization";
     protected LoggerInterface $logger;
 
+    private JwtHandler $jwtHandler;
+    private MemberPasswordEncrypt $encrypt;
+
     public function __construct(
         SettingsInterface $settings,
         Container $container,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        MemberPasswordEncrypt $encrypt,
+        JwtHandler $jwtHandler
     )
     {
         $this->logger = $logger;
         $this->secretKey = $settings->get('config')['ENCRYPT_KEY'];
+        $this->jwtHandler = $jwtHandler;
+        $this->encrypt = $encrypt;
     }
 
 
@@ -44,17 +52,19 @@ class JwtMiddleware implements MiddlewareInterface
     public function validateTokenReturnUserIdx(string $token) : bool
     {
         // 암호화 디코드
-        $tokenDecoded = JwtHandler::decryptToken($this->secretKey, $token);
+        $decryptToken = $this->encrypt->decrypt($token);
+        $tokenDecoded = $this->jwtHandler->decryptToken($decryptToken);
+        //$tokenDecoded = $token;
+        var_dump($tokenDecoded);
         // claims 디코드
-        $claims = JwtHandler::decodeJwt($tokenDecoded, $this->secretKey);
-
+        $claims = $this->jwtHandler->decodeJwt($tokenDecoded);
+        var_dump($claims);
         // 유효기간 확인
-        $expiredAt = $claims['exp'];
+        $expiredAt = $claims->exp;
         $now = strtotime("now");
         if ($expiredAt < $now) {
             return false;
         }
-        $userId = $claims['user_id'];
         // 세션 확인
         //session_start();
         //$tokens = $_SESSION[$userId];
@@ -63,18 +73,24 @@ class JwtMiddleware implements MiddlewareInterface
         //}
 
         // 유저 확인
-        return $userId;
+        return $claims->userId;
     }
 
     public function validateToken(string $token) : bool
     {
-        return is_numeric($this->validateTokenReturnUserIdx($token));
+        return $this->validateTokenReturnUserIdx($token);
     }
 
+    public function __invoke(Request $request, RequestHandlerInterface $handler): Response
+    {
+        $this->logger->info("jwt-invoke");
+        return $this->process($request, $handler);
+    }
     public function process(Request $request, RequestHandlerInterface $handler): Response
     {
+        $this->logger->info("jwt-process");
         $token = $this->extractToken($request); // JWT 토큰 추출 메서드 구현
-
+        echo $token.PHP_EOL;
         $this->logger->info(
             "TOKEN PROCESS {$request->getUri()} : ".PHP_EOL
             ."TOKEN : ".$token

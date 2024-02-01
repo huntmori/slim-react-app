@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Middleware\JwtMiddleware;
 use App\Application\Middleware\SessionMiddleware;
 use Slim\App;
 

@@ -2,6 +2,7 @@
 
 namespace App\Application\Middleware;
 
+use App\Application\Common\model\JwtClaim;
 use App\Application\Settings\SettingsInterface;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -18,15 +19,19 @@ class JwtHandler
         $this->encryptKey = $settings->get('config')['MEMBER_PASSWORD_ENCRYPT_KEY'];
     }
 
-    public function createToken($userId) :string
+    public function createToken(array $params) :string
     {
-        $claims = [
-            'userId' => $userId,
-            'exp'=>strtotime($this->TOKEN_EXPIRE)
-        ];
+        $userId = $params['userId'];
+        $profileUid = $params['profileUid'];
+
+        $claims = (new JwtClaim())->init(
+            $userId,
+            $profileUid,
+            strtotime($this->TOKEN_EXPIRE)
+        );
 
         $token = $this->encodeJwt($claims);
-        //echo PHP_EOL.'token : '.$token.PHP_EOL;
+
         return $this->encryptToken($token);
     }
 
@@ -34,18 +39,22 @@ class JwtHandler
         return $claims['userId'];
     }
 
-    public function encodeJwt($claims) : string
+    public function encodeJwt(JwtClaim $claims) : string
     {
-        return JWT::encode($claims, $this->encryptKey, $this->jwtEncodeAlgorithm);
+        return JWT::encode(
+            $claims->toArray(),
+            $this->encryptKey,
+            $this->jwtEncodeAlgorithm
+        );
     }
 
-    public function decodeJwt($token) : array
+    public function decodeJwt(string $token) : JwtClaim
     {
         $key = new Key($this->encryptKey, $this->jwtEncodeAlgorithm);
         $headers = new \stdClass();
         $decoded = JWT::decode($token, $key, $headers);
 
-        return (array)$decoded;
+        return (new JwtClaim())->initFromArray((array)$decoded);
     }
 
     public function encryptToken(string $token) : string

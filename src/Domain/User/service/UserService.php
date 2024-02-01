@@ -2,6 +2,7 @@
 
 namespace App\Domain\User\service;
 
+use App\Domain\Profile\entities\Profile;
 use App\Domain\User\entities\User;
 use App\Domain\User\models\UserCreateRequest;
 use App\Domain\User\models\UserLoginRequest;
@@ -19,7 +20,7 @@ interface UserService
     ) : User;
 
     public function userLogin(UserLoginRequest $requestBody) : UserLoginResponse;
-    public function getUserJwtToken(User $user) : string;
+    public function getUserJwtToken(User $user, Profile $primaryProfile) : string;
 
     public function getUserByUserId(string $userId) : ?User;
     public function getUserByUserIdx(int $userIdx) : ?User;

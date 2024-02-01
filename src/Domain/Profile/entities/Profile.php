@@ -5,8 +5,8 @@ namespace App\Domain\Profile\entities;
 class Profile
 {
     private ?int $idx;
-    private ?int $userIdx;
-    private ?string $uuid;
+    private ?string $userUid;
+    private ?string $uid;
     private ?string $profileNickName;
     private ?bool $isPrimary;
     private ?bool $deleted;
@@ -14,6 +14,21 @@ class Profile
     private ?bool $banned;
     private ?string $createdAt;
     private ?string $updatedAt;
+
+    public function toArray() : array {
+        return ([
+            'idx'=> $this->idx,
+            'uid'=> $this->uid,
+            'userUid' => $this->userUid,
+            'profileNickName' => $this->profileNickName,
+            'isPrimary' => $this->isPrimary,
+            'deleted' => $this->deleted,
+            'activated' => $this->activated,
+            'banned' => $this->banned,
+            'createdAt' => $this->createdAt,
+            'updatedAt' => $this->updatedAt
+        ]);
+    }
 
     public function getIdx(): ?int
     {
@@ -25,24 +40,24 @@ class Profile
         $this->idx = $idx;
     }
 
-    public function getUserIdx(): ?int
+    public function getUserUid(): ?string
     {
-        return $this->userIdx;
+        return $this->userUid;
     }
 
-    public function setUserIdx(?int $userIdx): void
+    public function setUserUid(?string $userUid): void
     {
-        $this->userIdx = $userIdx;
+        $this->userUid = $userUid;
     }
 
-    public function getUuid(): ?string
+    public function getUid(): ?string
     {
-        return $this->uuid;
+        return $this->uid;
     }
 
-    public function setUuid(?string $uuid): void
+    public function setUid(?string $uid): void
     {
-        $this->uuid = $uuid;
+        $this->uid = $uid;
     }
 
     public function getProfileNickName(): ?string
@@ -114,5 +129,7 @@ class Profile
     {
         $this->updatedAt = $updatedAt;
     }
+
+
 
 }

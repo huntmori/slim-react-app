@@ -23,8 +23,12 @@ abstract class BaseDto
         }
 
         if (is_object($params)) {
-            $KEY_NAMES = array_keys(get_object_vars($params));
             $arrayParameter = (array)($params);
+            echo 'array Parameter :';
+            var_dump($arrayParameter);
+            echo PHP_EOL . PHP_EOL;
+            $KEY_NAMES = array_keys($arrayParameter);
+            var_dump($KEY_NAMES);
         }
         $allowKeys = $this->getAllowKeyNames();
         foreach($KEY_NAMES as $key) {

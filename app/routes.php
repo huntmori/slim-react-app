@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Application\Common\MemberPasswordEncrypt;
+use App\Application\Middleware\JwtMiddleware;
+use App\Domain\Profile\controller\ProfileController;
 use App\Domain\User\actions\UserCreateAction;
 use App\Domain\User\controller\UserController;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -12,9 +14,11 @@ use Slim\Routing\RouteCollectorProxy;
 
 return function (App $app) {
     $app->options('/{routes:.+}', function ($request, $response, $args) {
+        echo 'options'.PHP_EOL;
         return $response;
     });
     $app->add(function ($request, $handler) {
+        echo 'cors middleware' .PHP_EOL;
         $response = $handler->handle($request);
         return $response
             ->withHeader('Access-Control-Allow-Origin', '*')
@@ -27,16 +31,41 @@ return function (App $app) {
         return $response;
     });
 
-
-    $app->group('/api/user', function(RouteCollectorProxy $group) use ($app) {
+    $app->group('/api/user', function (RouteCollectorProxy $group) use ($app) {
         $group->post('', UserController::class.':createUser');
-        $group->get('/id:{id}', UserController::class.':getUser');
-
         $group->post('/login', UserController::class.':userLogin');
     });
 
-    $app->group("/api/profile", function(RouteCollectorProxy $group) use ($app) {
-        //$group->put("", $callable);
+    $app->get(
+        '/api/user/id:{id}',
+        UserController::class.':getUser'
+    )->add(JwtMiddleware::class);
+
+    $app->group("/api/profile", function (RouteCollectorProxy $group) {
+        $group->put(
+            "",
+            ProfileController::class . ':createUserProfile'
+        )->add(JwtMiddleware::class);
+
+        $group->get(
+            "/{uid}",
+            ProfileController::class . ":getProfile"
+        )->add(JwtMiddleware::class);
+
+        $group->get(
+            "",
+            ProfileController::class . ":getProfiles"
+        )->add(JwtMiddleware::class);
+
+        $group->patch(
+            "/{uid}/activation",
+            ProfileController::class . ":updateProfileActivation"
+        )->add(JwtMiddleware::class);
+
+        $group->get(
+            "/nickname/{nickname}",
+            ProfileController::class . ":searchByNickname"
+        )->add(JwtMiddleware::class);
     });
     /*
     $app->get("/test", function(Request $request, Response $response) use ($app) {
